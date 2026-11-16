@@ -10,7 +10,12 @@ import edge_tts
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 AUDIO = os.path.join(ROOT, "audio")
-VOICES = {"katja": "de-DE-KatjaNeural", "conrad": "de-DE-ConradNeural"}
+VOICES = {
+    "seraphina": "de-DE-SeraphinaMultilingualNeural",
+    "florian": "de-DE-FlorianMultilingualNeural",
+    "katja": "de-DE-KatjaNeural",
+    "conrad": "de-DE-ConradNeural",
+}
 RATE = "-5%"
 TEST = "Hallo! Ich bin deine Stimme für die B2-Prüfung. Viel Erfolg beim Lernen!"
 
@@ -58,6 +63,7 @@ async def main():
         out[vname] = {}
         old = manifest.get(vname, {})
         new = {}
+        failed = False
         for key, text in items.items():
             h = hashlib.sha1(f"{vid}|{RATE}|{text}".encode()).hexdigest()
             path = os.path.join(AUDIO, vname, key + ".mp3")
@@ -73,8 +79,13 @@ async def main():
                         print("retry", key, e, file=sys.stderr)
                         await asyncio.sleep(3)
                 else:
-                    raise SystemExit(f"Failed to record {key}")
+                    failed = True
+                    break
             out[vname][key] = new[key]["t"]
+        if failed:  # this voice isn't available right now: leave it out, keep the others
+            print(f"Skipping voice {vname}: could not record {key}", file=sys.stderr)
+            out.pop(vname, None)
+            continue
         manifest[vname] = new
     json.dump(manifest, open(man_path, "w"), ensure_ascii=False)
     with open(os.path.join(AUDIO, "timings.js"), "w", encoding="utf-8") as f:
