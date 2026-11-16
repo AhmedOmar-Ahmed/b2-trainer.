@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B2 Mündlich – Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f7f3ec; --card:#fffdf9; --ink:#1f1b16; --muted:#6f665b; --line:#e6ddd0;
+  --accent:#8b2e2e; --accent-soft:#f3e3df; --ok:#2f6b4f; --ok-soft:#e1efe7; --hl:#ffe08a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:16px;line-height:1.6}
+button{font:inherit;cursor:pointer}
+.app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+aside{background:#211c17;color:#efe6d8;padding:24px 16px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{font-family:Fraunces,serif;font-size:22px;font-weight:700;margin:0 8px 4px}
+.brand-sub{font-size:13px;color:#b9ab97;margin:0 8px 22px}
+.topic-btn{display:block;width:100%;text-align:left;background:none;border:0;color:inherit;padding:12px;border-radius:10px;margin-bottom:4px}
+.topic-btn:hover{background:#2e2721}
+.topic-btn.active{background:#3a2f27;box-shadow:inset 3px 0 0 #e0a26b}
+.topic-btn .t{font-weight:600;font-size:14.5px;display:block}
+.topic-btn .p{font-size:12px;color:#b9ab97}
+.bar{height:4px;background:#3d342c;border-radius:4px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:#e0a26b;width:0;transition:width .3s}
+.side-note{font-size:12.5px;color:#b9ab97;margin:22px 8px 0;line-height:1.5;border-top:1px solid #3a322b;padding-top:16px}
+main{padding:32px clamp(16px,4vw,56px) 80px;max-width:980px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+h1{font-family:Fraunces,serif;font-size:clamp(28px,4vw,40px);line-height:1.15;margin:6px 0 4px}
+.h1-en{color:var(--muted);margin:0 0 20px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:22px}
+.btn{border:1px solid var(--line);background:var(--card);padding:10px 16px;border-radius:999px;font-weight:600;font-size:14.5px;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{border-color:#cbbca8}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#742424}
+.btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.vb{border-radius:12px;padding:12px 16px;font-size:14px;margin-bottom:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}.vb.good{background:var(--ok-soft)}.vb.bad{background:#fff1d6;border:1px solid #f0c66b}.vb .icon-btn{margin-left:auto}
+.tip{background:var(--accent-soft);border-radius:12px;padding:12px 16px;font-size:14px;margin-bottom:22px}
+.section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px;margin-bottom:14px;transition:border-color .2s}
+.section.done{border-color:#a9cbb8;background:#fbfefc}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:14px}
+.section.done .num{background:var(--ok-soft);color:var(--ok)}
+.sec-title{font-family:Fraunces,serif;font-size:19px;font-weight:600;flex:1}
+.sec-title small{display:block;font-family:Inter,sans-serif;font-size:12.5px;color:var(--muted);font-weight:400}
+.icon-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;white-space:nowrap}
+.icon-btn:hover{border-color:#cbbca8}
+.done-btn.is{background:var(--ok);border-color:var(--ok);color:#fff}
+.sent{margin:6px 0;font-size:17px;line-height:1.75}
+.sent .say{border:0;background:none;color:var(--muted);font-size:14px;padding:0 4px;vertical-align:1px}
+.sent .say:hover{color:var(--accent)}
+.sent.q{color:var(--accent);font-weight:500}
+.en{display:none;font-size:14px;color:var(--muted);margin:-2px 0 8px;font-style:italic}
+.show-en .en{display:block}
+.w{cursor:pointer;border-radius:4px;padding:0 1px;transition:background .15s}
+.w:hover{background:var(--hl)}
+.w.speaking{background:var(--hl)}
+.redemittel{background:#211c17;color:#efe6d8;border-radius:16px;padding:22px;margin-top:28px}
+.redemittel h3{font-family:Fraunces,serif;margin:0 0 12px;font-size:20px}
+.rm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.rm{background:#2e2721;border-radius:10px;padding:10px 12px;font-size:14px}
+.rm b{display:block;color:#f3c99d;font-weight:600}
+.rm span{color:#b9ab97;font-size:13px}
+/* popup */
+#pop{position:fixed;z-index:60;width:min(340px,92vw);background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 40px rgba(0,0,0,.18);padding:14px 16px;display:none}
+#pop .pw{font-family:Fraunces,serif;font-size:22px;font-weight:700}
+#pop .pg{font-size:16px;margin:2px 0 10px;color:var(--accent);font-weight:600}
+#pop .pg.none{color:var(--muted);font-weight:400;font-size:14px}
+#pop .ps{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
+#pop .prow{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+#pop a{font-size:13px;color:var(--accent);font-weight:600;text-decoration:none;padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+#pop .x{position:absolute;right:10px;top:8px;border:0;background:none;font-size:18px;color:var(--muted)}
+/* video player */
+#player{position:fixed;inset:0;z-index:50;background:rgba(15,12,10,.92);display:none;align-items:center;justify-content:center;padding:16px}
+#player.open{display:flex}
+.pv{width:min(1100px,100%);}
+.stage{position:relative;aspect-ratio:16/9;max-height:78vh;width:100%;border-radius:18px;overflow:hidden;background:radial-gradient(120% 120% at 0% 0%,#5a2a26 0%,#2a1d18 45%,#14100d 100%);color:#fff;display:flex;flex-direction:column;justify-content:center;padding:clamp(18px,5%,64px)}
+.stage::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 60% at 85% 90%,rgba(224,162,107,.25),transparent 70%);pointer-events:none}
+.st-top{position:absolute;top:clamp(12px,3%,28px);left:clamp(18px,5%,64px);right:clamp(18px,5%,64px);display:flex;justify-content:space-between;align-items:center;font-size:clamp(11px,1.4vw,15px);color:#e7d6c4;z-index:2}
+.st-chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);padding:4px 12px;border-radius:999px}
+.st-head{font-family:Fraunces,serif;font-size:clamp(16px,2.6vw,30px);color:#f3c99d;margin-bottom:clamp(8px,2%,20px);z-index:2;animation:rise .5s ease}
+.st-text{font-size:clamp(18px,3.3vw,40px);line-height:1.4;font-weight:500;z-index:2;animation:rise .5s ease}
+.st-text .w{padding:0 2px;border-radius:6px}
+.st-text .w:hover{background:rgba(255,224,138,.25)}
+.st-text .w.speaking{background:#ffe08a;color:#1f1b16}
+.st-en{margin-top:clamp(8px,2%,18px);font-size:clamp(13px,1.8vw,20px);color:#cdbba7;font-style:italic;z-index:2}
+.st-en.hide{visibility:hidden}
+.st-timer{position:absolute;bottom:clamp(14px,4%,34px);right:clamp(18px,5%,64px);z-index:2;display:none;align-items:center;gap:10px;background:rgba(0,0,0,.35);padding:8px 14px;border-radius:999px;font-weight:600;font-size:clamp(13px,1.6vw,18px)}
+.st-timer.show{display:flex}
+.avatar{position:absolute;bottom:clamp(14px,4%,34px);left:clamp(18px,5%,64px);z-index:2;display:flex;align-items:center;gap:10px;font-size:clamp(11px,1.3vw,14px);color:#e7d6c4}
+.av{width:clamp(30px,4vw,46px);height:clamp(30px,4vw,46px);border-radius:50%;background:linear-gradient(135deg,#e0a26b,#8b2e2e);position:relative}
+.av::before,.av::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #e0a26b;opacity:0}
+.talking .av::before{animation:ring 1.4s infinite}
+.talking .av::after{animation:ring 1.4s .7s infinite}
+@keyframes ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.8);opacity:0}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.prog{height:5px;background:rgba(255,255,255,.12);border-radius:5px;margin:12px 0;overflow:hidden}
+.prog i{display:block;height:100%;background:#e0a26b;width:0;transition:width .3s}
+.ctrls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:#efe6d8}
+.cb{background:#2e2721;color:#efe6d8;border:1px solid #463b31;border-radius:999px;padding:8px 14px;font-weight:600;font-size:14px}
+.cb:hover{background:#3a2f27}
+.cb.big{background:#e0a26b;color:#1f1b16;border-color:#e0a26b;min-width:110px}
+.cb.on{background:#efe6d8;color:#1f1b16}
+select.cb{appearance:auto;max-width:260px}
+.spacer{flex:1}
+.vnote{font-size:12.5px;color:#b9ab97;margin-top:10px}
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  aside{position:relative;height:auto;padding:16px}
+  #topics{display:flex;gap:6px;overflow-x:auto}
+  .topic-btn{min-width:180px}
+  .side-note{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div class="brand">B2 Mündlich</div>
+    <div class="brand-sub">Prüfungstraining · 6 Themen</div>
+    <div id="topics"></div>
+    <div class="side-note">💡 <b>Tipp:</b> Klicke auf jedes deutsche Wort, um die englische Bedeutung zu sehen.<br><br>🎧 Für die natürlichste Stimme öffne die Seite in <b>Microsoft Edge</b> (Stimmen „Katja“ / „Conrad“ Natural).</div>
+  </aside>
+  <main id="main"></main>
+</div>
+
+<div id="pop" role="dialog"><button class="x" onclick="hidePop()">×</button><div class="pw"></div><div class="pg"></div><div class="ps"></div><div class="prow"></div></div>
+
+<div id="player">
+  <div class="pv">
+    <div class="stage" id="stage">
+      <div class="st-top"><span class="st-chip" id="stTopic"></span><span class="st-chip" id="stCount"></span></div>
+      <div class="st-head" id="stHead"></div>
+      <div class="st-text" id="stText"></div>
+      <div class="st-en" id="stEn"></div>
+      <div class="avatar" id="avatar"><div class="av"></div><span id="avLabel">Sprecherin</span></div>
+      <div class="st-timer" id="stTimer"><span id="stTimerLabel">Sprich jetzt</span><span id="stTimerNum">60</span></div>
+    </div>
+    <div class="prog"><i id="progBar"></i></div>
+    <div class="ctrls">
+      <button class="cb" onclick="P.prev()" title="Zurück">⏮</button>
+      <button class="cb big" id="playBtn" onclick="P.toggle()">▶ Abspielen</button>
+      <button class="cb" onclick="P.next()" title="Weiter">⏭</button>
+      <button class="cb" id="modeBtn" onclick="P.cycleMode()">Modus: Lektion</button>
+      <button class="cb" id="rateBtn" onclick="P.cycleRate()">Tempo 1×</button>
+      <button class="cb on" id="enBtn" onclick="P.toggleEn()">EN-Untertitel</button>
+      <select class="cb" id="voiceSel" onchange="P.setVoice(this.value)"></select>
+      <span class="spacer"></span>
+      <button class="cb" onclick="P.close()">✕ Schließen</button>
+    </div>
+    <div class="vnote" id="vnote"></div>
+  </div>
+</div>
+
+<script type="application/json" id="data">
+{"topics":[{"id":"gewalt","title":"Verbot von Gewaltspielen – Pro und Kontra","en":"Banning violent games – pros and cons","sections":[["Zusammenfassung des Textes","Summary of the text",[["Im Text geht es um die Frage, ob gewalttätige Computerspiele verboten werden sollten.","The text is about whether violent computer games should be banned."],["Einige Menschen sind dafür, weil solche Spiele Jugendliche negativ beeinflussen könnten.","Some people are in favour, because such games could influence young people negatively."],["Andere sind dagegen, weil auch Familie, Freunde und das soziale Umfeld eine wichtige Rolle spielen.","Others are against it, because family, friends and the social environment also play an important role."],["Was hältst du von diesem Thema?","What do you think of this topic?"]]],["Eigene Meinung","Own opinion",[["Meiner Meinung nach ist ein vollständiges Verbot von Gewaltspielen keine gute Lösung.","In my opinion, a complete ban on violent games is not a good solution."],["Ich denke, dass nicht alle Jugendlichen durch solche Spiele aggressiv werden.","I think that not all young people become aggressive through such games."],["Vielmehr kommt es darauf an, wie oft und wie lange sie spielen.","Rather, it depends on how often and how long they play."],["Wie siehst du das?","How do you see it?"]]],["Vorteile eines Verbots","Advantages of a ban",[["Einerseits kann ich verstehen, dass manche Menschen ein Verbot fordern, weil sie Kinder und Jugendliche vor gewalttätigen Inhalten schützen möchten.","On the one hand, I can understand that some people demand a ban, because they want to protect children and teenagers from violent content."],["Außerdem könnten Jugendliche dadurch weniger mit Gewalt konfrontiert werden.","In addition, young people could be confronted with violence less as a result."],["Stimmst du mir da zu?","Do you agree with me on that?"]]],["Nachteile eines Verbots","Disadvantages of a ban",[["Andererseits bin ich der Ansicht, dass ein Verbot allein das Problem nicht lösen kann.","On the other hand, I am of the view that a ban alone cannot solve the problem."],["Jugendliche könnten solche Spiele trotzdem im Internet finden.","Young people could still find such games on the internet."],["Deshalb wäre es meiner Meinung nach sinnvoller, sie über die Risiken aufzuklären.","That's why, in my opinion, it would make more sense to educate them about the risks."],["Was denkst du darüber?","What do you think about it?"]]],["Einfluss auf das Verhalten","Influence on behaviour",[["Ein weiterer wichtiger Punkt ist, dass gewalttätige Spiele manche Jugendliche negativ beeinflussen könnten.","Another important point is that violent games could influence some young people negatively."],["Besonders wenn sie sehr viel Zeit damit verbringen, kann das problematisch werden.","Especially if they spend a lot of time on it, that can become problematic."],["Allerdings bedeutet das nicht, dass jeder Spieler automatisch aggressiv wird.","However, that doesn't mean that every player automatically becomes aggressive."],["Siehst du das genauso?","Do you see it the same way?"]]],["Verantwortung der Eltern","Parents' responsibility",[["Was die Verantwortung der Eltern betrifft, bin ich der Meinung, dass sie darauf achten sollten, welche Spiele ihre Kinder spielen.","As far as the parents' responsibility is concerned, I believe they should pay attention to which games their children play."],["Außerdem sollten sie klare Regeln für die Spielzeit festlegen und regelmäßig mit ihren Kindern sprechen.","They should also set clear rules for playing time and talk to their children regularly."],["Wie denkst du darüber?","What's your view on that?"]]],["Rolle der Schule","Role of the school",[["Ich halte es für besonders wichtig, dass Schulen Jugendliche über die möglichen Folgen von Gewaltspielen informieren.","I consider it especially important that schools inform young people about the possible consequences of violent games."],["Zum Beispiel könnten Lehrer Workshops organisieren und gemeinsam mit den Schülern über Medien und Gewalt diskutieren.","For example, teachers could organise workshops and discuss media and violence together with the students."],["Was hältst du davon?","What do you think of that?"]]],["Persönliche Erfahrung","Personal experience",[["Aus meiner eigenen Erfahrung kann ich sagen, dass Computerspiele für viele Menschen eine beliebte Freizeitbeschäftigung sind.","From my own experience I can say that computer games are a popular leisure activity for many people."],["Ich kenne auch Leute, die solche Spiele spielen und trotzdem freundlich und ruhig sind.","I also know people who play such games and are still friendly and calm."],["Deshalb glaube ich, dass man nicht alle Spieler gleich beurteilen sollte.","That's why I believe that you shouldn't judge all players the same way."],["Hast du ähnliche Erfahrungen gemacht?","Have you had similar experiences?"]]],["Lösungen und Alternativen","Solutions and alternatives",[["Statt Gewaltspiele vollständig zu verbieten, würde ich vorschlagen, dass wir die Altersbeschränkungen besser kontrollieren.","Instead of banning violent games completely, I would suggest that we check age restrictions better."],["Außerdem könnten Eltern ihre Kinder motivieren, mehr Sport zu treiben oder Zeit mit Freunden zu verbringen.","In addition, parents could motivate their children to do more sport or spend time with friends."],["Auf diese Weise könnten Jugendliche ihre Freizeit abwechslungsreicher gestalten.","In this way, young people could make their free time more varied."],["Was meinst du dazu?","What do you say to that?"]]],["Persönliches Fazit","Personal conclusion",[["Zusammenfassend lässt sich sagen, dass Gewaltspiele sowohl positive als auch negative Seiten haben können.","In summary, violent games can have both positive and negative sides."],["Ich bin davon überzeugt, dass Aufklärung, klare Regeln und die Unterstützung der Eltern sinnvoller sind als ein vollständiges Verbot.","I am convinced that education, clear rules and the support of the parents make more sense than a complete ban."],["Bist du auch dieser Meinung?","Are you of the same opinion?"]]]]},{"id":"rauchen","title":"Wie entwickelt sich das Rauchen in Deutschland?","en":"How is smoking developing in Germany?","sections":[["Zusammenfassung des Textes","Summary of the text",[["Im Text geht es um die Frage, wie sich das Rauchen in Deutschland entwickelt.","The text is about how smoking is developing in Germany."],["Zwar gibt es insgesamt weniger Raucher, aber Jugendliche fangen immer früher mit dem Rauchen an.","Although there are fewer smokers overall, young people are starting to smoke earlier and earlier."],["Gründe dafür sind zum Beispiel Gruppendruck, Werbung und Neugier.","Reasons for this are, for example, peer pressure, advertising and curiosity."],["Was hältst du von diesem Thema?","What do you think of this topic?"]]],["Eigene Meinung","Own opinion",[["Meiner Meinung nach ist Rauchen eine der schädlichsten Gewohnheiten überhaupt.","In my opinion, smoking is one of the most harmful habits of all."],["Ich finde es besonders bedenklich, dass immer mehr Jugendliche damit anfangen.","I find it especially worrying that more and more young people are starting."],["Wie siehst du das?","How do you see it?"]]],["Warum Jugendliche rauchen","Why young people smoke",[["Einerseits kann ich verstehen, dass Jugendliche erwachsen und cool wirken möchten.","On the one hand, I can understand that young people want to seem grown-up and cool."],["Außerdem wollen viele in ihrer Gruppe dazugehören und nicht als Außenseiter gelten.","In addition, many want to belong to their group and not be seen as outsiders."],["Stimmst du mir da zu?","Do you agree with me on that?"]]],["Gesundheitliche Folgen","Health consequences",[["Andererseits darf man nicht vergessen, dass Rauchen schwere Krankheiten wie Lungenkrebs oder Herzprobleme verursachen kann.","On the other hand, you must not forget that smoking can cause serious illnesses like lung cancer or heart problems."],["Jedes Jahr sterben viele Menschen an den Folgen des Rauchens.","Every year many people die from the consequences of smoking."],["Was denkst du darüber?","What do you think about it?"]]],["Einfluss von Werbung und Medien","Influence of advertising and media",[["Ein weiterer wichtiger Punkt ist der Einfluss von Filmen und Werbung.","Another important point is the influence of films and advertising."],["Dort wirken Raucher oft schick, lässig und selbstbewusst.","There, smokers often seem stylish, cool and self-confident."],["In Wirklichkeit ist das jedoch nur eine Illusion.","In reality, however, that is only an illusion."],["Siehst du das genauso?","Do you see it the same way?"]]],["Verantwortung der Eltern","Parents' responsibility",[["Was die Rolle der Eltern betrifft, bin ich der Meinung, dass sie ein gutes Vorbild sein sollten.","As far as the role of parents is concerned, I believe they should be a good role model."],["Wenn Eltern selbst rauchen, ist es schwer, den Kindern das Rauchen zu verbieten.","If parents smoke themselves, it is hard to forbid the children from smoking."],["Wie denkst du darüber?","What's your view on that?"]]],["Rolle der Schule","Role of the school",[["Ich halte es für sehr wichtig, dass Schulen früh über die Gefahren des Rauchens aufklären.","I consider it very important that schools educate early about the dangers of smoking."],["Zum Beispiel könnten Ärzte oder ehemalige Raucher in die Schule kommen und von ihren Erfahrungen erzählen.","For example, doctors or former smokers could come to the school and talk about their experiences."],["Was hältst du davon?","What do you think of that?"]]],["Persönliche Erfahrung","Personal experience",[["Aus meiner eigenen Erfahrung kann ich sagen, dass es sehr schwer ist, mit dem Rauchen aufzuhören.","From my own experience I can say that it is very hard to quit smoking."],["Ich kenne Leute, die es mehrmals versucht haben und immer wieder rückfällig geworden sind.","I know people who have tried several times and relapsed again and again."],["Deshalb ist es am besten, gar nicht erst anzufangen.","That's why it is best not to start in the first place."],["Hast du ähnliche Erfahrungen gemacht?","Have you had similar experiences?"]]],["Lösungen und Alternativen","Solutions and alternatives",[["Um das Problem zu lösen, würde ich vorschlagen, dass Zigaretten noch teurer werden und Werbung für Tabak komplett verboten wird.","To solve the problem, I would suggest that cigarettes become even more expensive and tobacco advertising is completely banned."],["Außerdem sollte der Verkauf an Jugendliche strenger kontrolliert werden.","In addition, sales to young people should be controlled more strictly."],["Was meinst du dazu?","What do you say to that?"]]],["Persönliches Fazit","Personal conclusion",[["Zusammenfassend lässt sich sagen, dass Rauchen viele Risiken und keine echten Vorteile hat.","In summary, smoking has many risks and no real advantages."],["Ich bin davon überzeugt, dass Aufklärung, gute Vorbilder und strenge Regeln am meisten helfen.","I am convinced that education, good role models and strict rules help the most."],["Bist du auch dieser Meinung?","Are you of the same opinion?"]]]]},{"id":"hochzeit","title":"Hochzeit nur zu zweit","en":"A wedding for just two","sections":[["Zusammenfassung des Textes","Summary of the text",[["Im Text geht es um ein Ehepaar, das ganz ohne Gäste geheiratet hat.","The text is about a married couple who got married without any guests."],["Christiane und Olaf Witte haben an der Nordseeküste geheiratet und nur etwa 1.800 Euro ausgegeben.","Christiane and Olaf Witte got married on the North Sea coast and spent only about 1,800 euros."],["Laut einer Umfrage wünschen sich viele Deutsche eine kleine und günstige Hochzeit.","According to a survey, many Germans want a small and inexpensive wedding."],["Was hältst du von diesem Thema?","What do you think of this topic?"]]],["Eigene Meinung","Own opinion",[["Meiner Meinung nach sollte jedes Paar selbst entscheiden, wie es heiraten möchte.","In my opinion, every couple should decide for themselves how they want to get married."],["Ich persönlich finde eine kleine Hochzeit sehr romantisch, aber ich würde meine Familie gern dabeihaben.","Personally, I find a small wedding very romantic, but I would like to have my family there."],["Wie siehst du das?","How do you see it?"]]],["Vorteile einer kleinen Hochzeit","Advantages of a small wedding",[["Einerseits spart man sehr viel Geld, das man zum Beispiel für eine Wohnung oder eine schöne Reise nutzen kann.","On the one hand, you save a lot of money that you can use, for example, for a flat or a nice trip."],["Außerdem hat man weniger Stress bei der Planung.","In addition, you have less stress with the planning."],["Stimmst du mir da zu?","Do you agree with me on that?"]]],["Nachteile einer kleinen Hochzeit","Disadvantages of a small wedding",[["Andererseits könnten Familie und Freunde enttäuscht oder sogar verletzt sein, wenn sie nicht eingeladen werden.","On the other hand, family and friends could be disappointed or even hurt if they are not invited."],["Eine Hochzeit ist schließlich auch ein Fest für die ganze Familie.","After all, a wedding is also a celebration for the whole family."],["Was denkst du darüber?","What do you think about it?"]]],["Die Kosten einer Hochzeit","The cost of a wedding",[["Ein weiterer wichtiger Punkt sind die Kosten.","Another important point is the cost."],["Eine große Hochzeit kann schnell mehr als 10.000 Euro kosten, und manche Paare nehmen dafür sogar einen Kredit auf.","A big wedding can quickly cost more than 10,000 euros, and some couples even take out a loan for it."],["Das halte ich nicht für sinnvoll.","I don't think that is sensible."],["Siehst du das genauso?","Do you see it the same way?"]]],["Die Rolle der Familie","The role of the family",[["Was die Familie betrifft, bin ich der Meinung, dass man die Eltern zumindest informieren sollte.","As far as the family is concerned, I believe you should at least inform the parents."],["Vielleicht kann man später eine kleine Feier mit der Familie organisieren.","Maybe you can organise a small party with the family later."],["Wie denkst du darüber?","What's your view on that?"]]],["Hochzeit in meinem Heimatland","Weddings in my home country",[["In meinem Heimatland ist eine Hochzeit normalerweise ein sehr großes Fest mit vielen Gästen.","In my home country, a wedding is usually a very big celebration with many guests."],["Oft werden mehrere hundert Personen eingeladen, und die Feier dauert manchmal mehrere Tage.","Often several hundred people are invited, and the celebration sometimes lasts several days."],["Eine Hochzeit nur zu zweit wäre bei uns ziemlich ungewöhnlich.","A wedding for just two would be quite unusual where I come from."],["Wie ist das in deinem Heimatland?","How is it in your home country?"]]],["Persönliche Erfahrung","Personal experience",[["Aus meiner eigenen Erfahrung kann ich sagen, dass große Hochzeiten sehr schön, aber auch sehr anstrengend sind.","From my own experience I can say that big weddings are very beautiful but also very exhausting."],["Das Brautpaar hat oft kaum Zeit, den Tag selbst zu genießen.","The bride and groom often hardly have time to enjoy the day themselves."],["Hast du ähnliche Erfahrungen gemacht?","Have you had similar experiences?"]]],["Lösungen und Kompromisse","Solutions and compromises",[["Ich würde vorschlagen, einen Kompromiss zu finden, zum Beispiel eine kleine Feier nur mit der engsten Familie und den besten Freunden.","I would suggest finding a compromise, for example a small party with only the closest family and best friends."],["So spart man Geld, und niemand fühlt sich ausgeschlossen.","That way you save money, and nobody feels left out."],["Was meinst du dazu?","What do you say to that?"]]],["Persönliches Fazit","Personal conclusion",[["Zusammenfassend lässt sich sagen, dass eine Hochzeit zu zweit sowohl Vorteile als auch Nachteile hat.","In summary, a wedding for two has both advantages and disadvantages."],["Ich bin davon überzeugt, dass nicht das Geld, sondern die Liebe das Wichtigste ist.","I am convinced that the most important thing is not money but love."],["Bist du auch dieser Meinung?","Are you of the same opinion?"]]]]},{"id":"solarium","title":"Solarium im Winter – Gut für die Gesundheit?","en":"Tanning beds in winter – good for your health?","sections":[["Zusammenfassung des Textes","Summary of the text",[["Im Text geht es um die Frage, ob ein Solarium im Winter gut für die Gesundheit ist.","The text is about whether a tanning bed in winter is good for your health."],["Einerseits brauchen Menschen Sonnenlicht für ihr Wohlbefinden und für die Produktion von Vitamin D.","On the one hand, people need sunlight for their well-being and for the production of vitamin D."],["Andererseits warnen Ärzte, dass das künstliche Licht die Haut schädigen und sogar Hautkrebs auslösen kann.","On the other hand, doctors warn that the artificial light can damage the skin and even cause skin cancer."],["Was hältst du von diesem Thema?","What do you think of this topic?"]]],["Eigene Meinung","Own opinion",[["Meiner Meinung nach ist ein Solarium nicht die beste Lösung für den Winter.","In my opinion, a tanning bed is not the best solution for winter."],["Ich denke, dass die Risiken für die Haut größer sind als der Nutzen.","I think that the risks for the skin are greater than the benefit."],["Wie siehst du das?","How do you see it?"]]],["Vorteile des Solariums","Advantages of the tanning bed",[["Einerseits kann ich verstehen, dass viele Menschen im Winter ins Solarium gehen.","On the one hand, I can understand that many people go to a tanning salon in winter."],["Das Licht kann die Stimmung verbessern und gegen Lustlosigkeit helfen.","The light can improve your mood and help against listlessness."],["Stimmst du mir da zu?","Do you agree with me on that?"]]],["Nachteile des Solariums","Disadvantages of the tanning bed",[["Andererseits sind die Strahlen im Solarium oft sehr stark.","On the other hand, the rays in a tanning bed are often very strong."],["Sie können die Hautzellen schädigen, die Haut schneller altern lassen und das Risiko für Hautkrebs erhöhen.","They can damage skin cells, make the skin age faster and increase the risk of skin cancer."],["Was denkst du darüber?","What do you think about it?"]]],["Das Schönheitsideal","The beauty ideal",[["Ein weiterer wichtiger Punkt ist, dass die meisten Besucher das Solarium nur nutzen, um braun zu sein.","Another important point is that most visitors only use the tanning bed to be tanned."],["Braune Haut gilt bei vielen als schön und gesund.","Many people regard tanned skin as beautiful and healthy."],["Ich finde aber, dass Gesundheit wichtiger ist als Aussehen.","But I think health is more important than appearance."],["Siehst du das genauso?","Do you see it the same way?"]]],["Kinder und Jugendliche","Children and young people",[["Was Kinder und Jugendliche betrifft, bin ich der Meinung, dass sie auf keinen Fall ins Solarium gehen sollten, weil ihre Haut besonders empfindlich ist.","As for children and teenagers, I believe they should under no circumstances use tanning beds, because their skin is particularly sensitive."],["Deshalb finde ich das Verbot für Minderjährige richtig.","That's why I think the ban for minors is right."],["Wie denkst du darüber?","What's your view on that?"]]],["Alternativen im Winter","Alternatives in winter",[["Ich halte es für sinnvoller, im Winter möglichst viel Zeit draußen zu verbringen, zum Beispiel bei einem Spaziergang in der Mittagszeit.","I think it makes more sense to spend as much time outside as possible in winter, for example on a walk at lunchtime."],["Außerdem kann man Vitamin D über die Ernährung oder nach Rücksprache mit dem Arzt als Tablette aufnehmen.","You can also get vitamin D through your diet or, after consulting a doctor, as a tablet."],["Was hältst du davon?","What do you think of that?"]]],["Persönliche Erfahrung","Personal experience",[["Aus meiner eigenen Erfahrung kann ich sagen, dass der Winter in Deutschland sehr lang und dunkel sein kann.","From my own experience I can say that winter in Germany can be very long and dark."],["In meinem Heimatland scheint die Sonne viel öfter, deshalb musste ich mich erst daran gewöhnen.","In my home country the sun shines much more often, so I had to get used to it first."],["Sport und Treffen mit Freunden helfen mir dabei sehr.","Sport and meeting friends help me a lot with that."],["Hast du ähnliche Erfahrungen gemacht?","Have you had similar experiences?"]]],["Lösungen und Tipps","Solutions and tips",[["Wer trotzdem ins Solarium gehen möchte, sollte sich vorher von einem Arzt beraten lassen.","Anyone who still wants to use a tanning bed should get advice from a doctor first."],["Außerdem sollte man ein Gerät mit niedriger Strahlenbelastung wählen und nicht zu oft gehen.","You should also choose a device with low radiation exposure and not go too often."],["Was meinst du dazu?","What do you say to that?"]]],["Persönliches Fazit","Personal conclusion",[["Zusammenfassend lässt sich sagen, dass ein Solarium zwar die Stimmung verbessern kann, aber auch ernste Risiken hat.","In summary, a tanning bed can improve your mood, but it also has serious risks."],["Ich bin davon überzeugt, dass frische Luft, Bewegung und eine gesunde Ernährung die bessere Wahl sind.","I am convinced that fresh air, exercise and a healthy diet are the better choice."],["Bist du auch dieser Meinung?","Are you of the same opinion?"]]]]},{"id":"nahrung","title":"Wie sinnvoll sind Nahrungsergänzungsmittel?","en":"How useful are dietary supplements?","sections":[["Zusammenfassung des Textes","Summary of the text",[["Im Text geht es um die Frage, wie sinnvoll Nahrungsergänzungsmittel sind.","The text is about how useful dietary supplements are."],["Das Angebot an Vitaminen und Mineralstoffen in Form von Tabletten, Kapseln oder Pulver wird immer größer.","The range of vitamins and minerals in the form of tablets, capsules or powder keeps getting bigger."],["Viele Experten meinen jedoch, dass eine ausgewogene Ernährung völlig ausreicht.","However, many experts think that a balanced diet is completely sufficient."],["Was hältst du von diesem Thema?","What do you think of this topic?"]]],["Eigene Meinung","Own opinion",[["Meiner Meinung nach brauchen die meisten gesunden Menschen keine Nahrungsergänzungsmittel.","In my opinion, most healthy people don't need dietary supplements."],["Ich denke, dass man mit frischem Obst und Gemüse alle wichtigen Nährstoffe bekommt.","I think that with fresh fruit and vegetables you get all the important nutrients."],["Wie siehst du das?","How do you see it?"]]],["Vorteile","Advantages",[["Einerseits können Nahrungsergänzungsmittel in bestimmten Situationen sinnvoll sein.","On the one hand, dietary supplements can be useful in certain situations."],["Zum Beispiel brauchen Veganer oft Vitamin B12, und Schwangere nehmen häufig Folsäure.","For example, vegans often need vitamin B12, and pregnant women often take folic acid."],["Stimmst du mir da zu?","Do you agree with me on that?"]]],["Nachteile","Disadvantages",[["Andererseits sind diese Produkte oft sehr teuer.","On the other hand, these products are often very expensive."],["Außerdem können zu viele Vitamine sogar schädlich sein, wenn man sie in hoher Dosis nimmt.","Moreover, too many vitamins can even be harmful if you take them in a high dose."],["Was denkst du darüber?","What do you think about it?"]]],["Stress und Zeitmangel","Stress and lack of time",[["Ein weiterer wichtiger Punkt ist, dass viele Menschen keine Zeit haben, gesund zu kochen.","Another important point is that many people don't have time to cook healthily."],["Deshalb greifen sie lieber zu Tabletten.","That's why they prefer to reach for pills."],["Aber eine Pille kann eine ungesunde Lebensweise nicht ausgleichen.","But a pill cannot make up for an unhealthy lifestyle."],["Siehst du das genauso?","Do you see it the same way?"]]],["Werbung und Industrie","Advertising and industry",[["Was die Werbung betrifft, bin ich der Meinung, dass die Hersteller mit der Angst der Menschen viel Geld verdienen.","As far as advertising is concerned, I believe the manufacturers earn a lot of money from people's fears."],["Die Werbung verspricht oft mehr, als die Produkte halten können.","The advertising often promises more than the products can deliver."],["Wie denkst du darüber?","What's your view on that?"]]],["Die Rolle der Ärzte","The role of doctors",[["Ich halte es für besonders wichtig, dass man vor der Einnahme mit einem Arzt spricht.","I think it is especially important to talk to a doctor before taking them."],["Ein Bluttest kann zeigen, ob einem wirklich ein Vitamin fehlt.","A blood test can show whether you are really missing a vitamin."],["Was hältst du davon?","What do you think of that?"]]],["Persönliche Erfahrung","Personal experience",[["Aus meiner eigenen Erfahrung kann ich sagen, dass viele Menschen in Deutschland im Winter Vitamin D nehmen.","From my own experience I can say that many people in Germany take vitamin D in winter."],["Ich habe das auch einmal gemacht, nachdem mein Arzt einen Mangel festgestellt hatte.","I did that once too, after my doctor had found a deficiency."],["Hast du ähnliche Erfahrungen gemacht?","Have you had similar experiences?"]]],["Lösungen und Alternativen","Solutions and alternatives",[["Statt viel Geld für Tabletten auszugeben, würde ich vorschlagen, mehr auf eine gesunde Ernährung zu achten.","Instead of spending a lot of money on pills, I would suggest paying more attention to a healthy diet."],["Man könnte zum Beispiel am Wochenende für die ganze Woche vorkochen.","For example, you could cook ahead at the weekend for the whole week."],["Was meinst du dazu?","What do you say to that?"]]],["Persönliches Fazit","Personal conclusion",[["Zusammenfassend lässt sich sagen, dass Nahrungsergänzungsmittel nur in bestimmten Fällen sinnvoll sind.","In summary, dietary supplements only make sense in certain cases."],["Ich bin davon überzeugt, dass eine ausgewogene Ernährung durch keine Tablette ersetzt werden kann.","I am convinced that a balanced diet cannot be replaced by any pill."],["Bist du auch dieser Meinung?","Are you of the same opinion?"]]]]},{"id":"eauto","title":"Elektroautos – Verkehrsmittel der näheren Zukunft?","en":"Electric cars – the transport of the near future?","sections":[["Zusammenfassung des Textes","Summary of the text",[["Im Text geht es um die Frage, ob Elektroautos das Verkehrsmittel der Zukunft sind.","The text is about whether electric cars are the means of transport of the future."],["Der Autor nennt Vorteile wie die niedrigen Kosten pro Kilometer und die Umweltfreundlichkeit.","The author names advantages like the low costs per kilometre and environmental friendliness."],["Es gibt aber auch Nachteile, zum Beispiel den hohen Kaufpreis, die geringe Reichweite und die wenigen Ladestationen.","But there are also disadvantages, for example the high purchase price, the short range and the few charging stations."],["Was hältst du von diesem Thema?","What do you think of this topic?"]]],["Eigene Meinung","Own opinion",[["Meiner Meinung nach gehört den Elektroautos die Zukunft, aber es gibt noch einige Probleme.","In my opinion, the future belongs to electric cars, but there are still some problems."],["Ich denke, dass sie heute vor allem für Menschen in der Stadt geeignet sind.","I think that today they are mainly suitable for people in the city."],["Wie siehst du das?","How do you see it?"]]],["Vorteile von Elektroautos","Advantages of electric cars",[["Einerseits sind Elektroautos umweltfreundlich, weil sie keine schädlichen Abgase produzieren.","On the one hand, electric cars are environmentally friendly because they don't produce harmful exhaust fumes."],["Außerdem sind sie sehr leise, und die Kosten für Strom, Steuer und Versicherung sind niedriger.","They are also very quiet, and the costs for electricity, tax and insurance are lower."],["Stimmst du mir da zu?","Do you agree with me on that?"]]],["Nachteile von Elektroautos","Disadvantages of electric cars",[["Andererseits ist der Kaufpreis eines Elektroautos immer noch sehr hoch.","On the other hand, the purchase price of an electric car is still very high."],["Zudem dauert das Aufladen oft mehrere Stunden, und die Akkus halten nur einige Jahre.","In addition, charging often takes several hours, and the batteries only last a few years."],["Was denkst du darüber?","What do you think about it?"]]],["Sicherheit im Verkehr","Road safety",[["Ein weiterer wichtiger Punkt ist die Sicherheit.","Another important point is safety."],["Weil Elektroautos fast keine Geräusche machen, könnten Fußgänger und Radfahrer sie überhören.","Because electric cars make almost no noise, pedestrians and cyclists might not hear them."],["Das könnte zu mehr Unfällen führen.","That could lead to more accidents."],["Siehst du das genauso?","Do you see it the same way?"]]],["Die Rolle des Staates","The role of the state",[["Was den Staat betrifft, bin ich der Meinung, dass er Elektroautos stärker fördern sollte.","As far as the state is concerned, I believe it should support electric cars more."],["Zum Beispiel könnte er mehr Ladestationen bauen und den Kauf finanziell unterstützen.","For example, it could build more charging stations and support the purchase financially."],["Wie denkst du darüber?","What's your view on that?"]]],["Stadt und Land","City and countryside",[["Ich halte es für wichtig, zwischen Stadt und Land zu unterscheiden.","I think it is important to distinguish between city and countryside."],["In der Stadt fährt man meistens kurze Strecken, deshalb reicht die Reichweite völlig aus.","In the city you mostly drive short distances, so the range is completely sufficient."],["Auf dem Land oder bei langen Reisen ist ein Elektroauto dagegen oft noch unpraktisch.","In the countryside or on long journeys, however, an electric car is often still impractical."],["Was hältst du davon?","What do you think of that?"]]],["Persönliche Erfahrung","Personal experience",[["Aus meiner eigenen Erfahrung kann ich sagen, dass man in Deutschland immer mehr Elektroautos auf den Straßen sieht.","From my own experience I can say that you see more and more electric cars on the roads in Germany."],["Ein Bekannter von mir fährt seit zwei Jahren ein Elektroauto und ist sehr zufrieden, weil er zu Hause laden kann.","An acquaintance of mine has been driving an electric car for two years and is very satisfied because he can charge at home."],["Hast du ähnliche Erfahrungen gemacht?","Have you had similar experiences?"]]],["Lösungen und Alternativen","Solutions and alternatives",[["Statt nur auf Elektroautos zu setzen, würde ich vorschlagen, auch Bus und Bahn auszubauen.","Instead of relying only on electric cars, I would suggest also expanding buses and trains."],["Außerdem könnte man in der Stadt öfter mit dem Fahrrad fahren.","In addition, people could cycle more often in the city."],["So würde man die Umwelt noch mehr schonen.","That way the environment would be protected even more."],["Was meinst du dazu?","What do you say to that?"]]],["Persönliches Fazit","Personal conclusion",[["Zusammenfassend lässt sich sagen, dass Elektroautos viele Vorteile haben, aber noch nicht perfekt sind.","In summary, electric cars have many advantages but are not perfect yet."],["Ich bin davon überzeugt, dass sie in Zukunft immer wichtiger werden, wenn Preise sinken und es mehr Ladestationen gibt.","I am convinced that they will become more and more important in the future if prices fall and there are more charging stations."],["Bist du auch dieser Meinung?","Are you of the same opinion?"]]]]}],"redemittel":[["Im Text geht es um …","The text is about …"],["Meiner Meinung nach …","In my opinion …"],["Ich bin der Ansicht, dass …","I am of the view that …"],["Einerseits … andererseits …","On the one hand … on the other hand …"],["Ein weiterer wichtiger Punkt ist …","Another important point is …"],["Was … betrifft, …","As far as … is concerned, …"],["Ich halte es für wichtig, dass …","I consider it important that …"],["Aus meiner eigenen Erfahrung …","From my own experience …"],["Ich würde vorschlagen, dass …","I would suggest that …"],["Zusammenfassend lässt sich sagen …","In summary, one can say …"],["Da stimme ich dir zu.","I agree with you on that."],["Da bin ich anderer Meinung.","I see that differently."],["Das ist ein guter Punkt, aber …","That's a good point, but …"],["Könntest du das genauer erklären?","Could you explain that more precisely?"]]}
+</script>
+<script src="audio/timings.js"></script>
+<script>
+/* ===================== CONTENT ===================== */
+const DATA = JSON.parse(document.getElementById("data").textContent);
+const TOPICS = DATA.topics, REDEMITTEL = DATA.redemittel;
+
+/* ===================== DICTIONARY (German → English) ===================== */
+const DICT = {
+"im":"in the","in":"in","text":"text","geht":"goes (es geht um = it is about)","es":"it","um":"around / about (es geht um)","die":"the","der":"the / of the","das":"the / that","den":"the","dem":"the","des":"of the","frage":"question","ob":"whether","gewalttätige":"violent","gewalttätigen":"violent","computerspiele":"computer games","verboten":"banned / forbidden","werden":"become / be (passive)","sollten":"should","sollte":"should","einige":"some","menschen":"people","sind":"are","dafür":"in favour of it / for it","weil":"because","solche":"such","spiele":"games","jugendliche":"young people / teenagers","jugendlichen":"young people","negativ":"negatively","beeinflussen":"influence","könnten":"could","andere":"others","dagegen":"against it / on the other hand","auch":"also","familie":"family","freunde":"friends","und":"and","soziale":"social","umfeld":"environment / surroundings","eine":"a / one","ein":"a / one","einen":"a","einem":"a","einer":"a / of a","wichtige":"important","wichtiger":"more important / important","wichtigen":"important","wichtig":"important","rolle":"role","spielen":"play","was":"what","hältst":"think (halten von = think of)","halte":"consider / think","du":"you","von":"of / from","diesem":"this","thema":"topic","meiner":"my","meinung":"opinion","nach":"after / according to","ist":"is","vollständiges":"complete","vollständigen":"complete","vollständig":"completely","verbot":"ban","verbots":"of a ban","gewaltspielen":"violent games","gewaltspiele":"violent games","keine":"no / not a","kein":"no","gute":"good","guter":"good","gutes":"good","gut":"good","lösung":"solution","lösungen":"solutions","ich":"I","denke":"think","dass":"that","nicht":"not","alle":"all","allen":"all","durch":"through / by","aggressiv":"aggressive","vielmehr":"rather","kommt":"comes","darauf":"on it (es kommt darauf an = it depends)","an":"at / on","wie":"how / like","oft":"often","lange":"long","sie":"they / she / you","siehst":"see","vorteile":"advantages","nachteile":"disadvantages","eines":"of a","einerseits":"on the one hand","andererseits":"on the other hand","kann":"can","können":"can","verstehen":"understand","manche":"some","fordern":"demand","kinder":"children","kindern":"children","vor":"before / from","inhalten":"contents","schützen":"protect","möchten":"would like","möchte":"would like","außerdem":"in addition / besides","dadurch":"as a result / thereby","weniger":"less / fewer","mit":"with","gewalt":"violence","konfrontiert":"confronted","stimmst":"agree (zustimmen)","mir":"me / to me","da":"there / since","zu":"to / too","bin":"am","ansicht":"view / opinion","allein":"alone","problem":"problem","lösen":"solve","trotzdem":"nevertheless / still","internet":"internet","finden":"find","deshalb":"therefore / that's why","wäre":"would be","sinnvoller":"more sensible / more useful","sinnvoll":"sensible / useful","über":"about / over","risiken":"risks","aufzuklären":"to educate / inform","aufklären":"educate / inform","denkst":"think","darüber":"about it","einfluss":"influence","auf":"on / to","verhalten":"behaviour","weiterer":"further / another","punkt":"point","besonders":"especially","wenn":"if / when","sehr":"very","viel":"much / a lot","zeit":"time","damit":"with it / so that","verbringen":"spend (time)","problematisch":"problematic","allerdings":"however","bedeutet":"means","jeder":"every","spieler":"player(s)","automatisch":"automatically","wird":"becomes / will","genauso":"just the same","verantwortung":"responsibility","eltern":"parents","betrifft":"concerns (was … betrifft = as for …)","achten":"pay attention","welche":"which","ihre":"their / her","ihren":"their","ihrer":"their","klare":"clear","regeln":"rules","spielzeit":"playing time","festlegen":"set / determine","regelmäßig":"regularly","sprechen":"speak / talk","schule":"school","schulen":"schools","für":"for","informieren":"inform","möglichen":"possible","folgen":"consequences","zum":"to the (zum Beispiel = for example)","beispiel":"example","lehrer":"teachers","workshops":"workshops","organisieren":"organise","gemeinsam":"together","schülern":"students / pupils","medien":"media","diskutieren":"discuss","persönliche":"personal","persönliches":"personal","aus":"from / out of","eigenen":"own","erfahrung":"experience","erfahrungen":"experiences","sagen":"say","viele":"many","vielen":"many","beliebte":"popular","freizeitbeschäftigung":"leisure activity","kenne":"know","leute":"people","freundlich":"friendly","ruhig":"calm","glaube":"believe","man":"one / you (people in general)","gleich":"the same / equally","beurteilen":"judge","hast":"have","ähnliche":"similar","gemacht":"made / done","alternativen":"alternatives","statt":"instead of","verbieten":"ban / forbid","würde":"would","vorschlagen":"suggest","wir":"we","altersbeschränkungen":"age restrictions","besser":"better","kontrollieren":"check / control","motivieren":"motivate","mehr":"more","sport":"sport","treiben":"do (Sport treiben = do sport)","oder":"or","diese":"this","weise":"way","freizeit":"free time","abwechslungsreicher":"more varied","gestalten":"shape / organise","meinst":"mean / think","dazu":"about that / in addition","fazit":"conclusion","zusammenfassend":"in summary","lässt":"lets (lässt sich sagen = can be said)","sich":"oneself / itself","sowohl":"both (sowohl … als auch)","als":"than / as","positive":"positive","negative":"negative","seiten":"sides","haben":"have","davon":"of it","überzeugt":"convinced","aufklärung":"education / information","unterstützung":"support","bist":"are",
+"rauchen":"smoking / to smoke","rauchens":"of smoking","deutschland":"Germany","entwickelt":"develops","zwar":"admittedly / although","gibt":"gives (es gibt = there is)","insgesamt":"overall","raucher":"smokers","fangen":"catch (anfangen = start)","immer":"always (immer früher = earlier and earlier)","früher":"earlier","gründe":"reasons","gruppendruck":"peer pressure","werbung":"advertising","neugier":"curiosity","schädlichsten":"most harmful","gewohnheiten":"habits","überhaupt":"at all / of all","finde":"find / think","bedenklich":"worrying","anfangen":"start","erwachsen":"grown-up","cool":"cool","wirken":"seem / appear","wollen":"want","gruppe":"group","dazugehören":"belong","außenseiter":"outsider","gelten":"be considered","darf":"may","vergessen":"forget","schwere":"serious / heavy","krankheiten":"illnesses","lungenkrebs":"lung cancer","herzprobleme":"heart problems","verursachen":"cause","jedes":"every","jahr":"year","sterben":"die","filmen":"films","dort":"there","schick":"stylish","lässig":"cool / casual","selbstbewusst":"self-confident","wirklichkeit":"reality","jedoch":"however","nur":"only","illusion":"illusion","vorbild":"role model","vorbilder":"role models","sein":"be / his","selbst":"oneself / themselves","schwer":"hard / difficult","früh":"early","gefahren":"dangers","ärzte":"doctors","ehemalige":"former","kommen":"come","erzählen":"tell","aufzuhören":"to stop / quit","mehrmals":"several times","versucht":"tried","wieder":"again","rückfällig":"relapsed","geworden":"become","am":"at the","besten":"best","gar":"at all","erst":"first / only","anzufangen":"to start","zigaretten":"cigarettes","noch":"still / even","teurer":"more expensive","tabak":"tobacco","komplett":"completely","verkauf":"sale","strenger":"more strictly","kontrolliert":"controlled","echten":"real","strenge":"strict","helfen":"help","meisten":"most",
+"hochzeit":"wedding","hochzeiten":"weddings","zweit":"two (zu zweit = as a pair)","ehepaar":"married couple","ganz":"completely","ohne":"without","gäste":"guests","gästen":"guests","geheiratet":"married","hat":"has","haben":"have","nordseeküste":"North Sea coast","etwa":"about","euro":"euro","ausgegeben":"spent","laut":"according to","umfrage":"survey","wünschen":"wish / want","deutsche":"Germans","kleine":"small","günstige":"cheap / affordable","jedes":"every","paar":"couple","paare":"couples","entscheiden":"decide","heiraten":"marry","persönlich":"personally","romantisch":"romantic","aber":"but","meine":"my","gern":"gladly","dabeihaben":"have there / with me","spart":"saves","geld":"money","wohnung":"flat / apartment","schöne":"beautiful / nice","reise":"trip","nutzen":"use / benefit","hat":"has","stress":"stress","bei":"at / with","planung":"planning","enttäuscht":"disappointed","sogar":"even","verletzt":"hurt","eingeladen":"invited","schließlich":"after all / finally","fest":"celebration / festival","ganze":"whole","kosten":"costs / to cost","große":"big","schnell":"quickly","nehmen":"take","dafür":"for it","kredit":"loan","zumindest":"at least","vielleicht":"maybe","später":"later","feier":"party / celebration","heimatland":"home country","meinem":"my","normalerweise":"normally","fest":"celebration","mehrere":"several","hundert":"hundred","personen":"people","dauert":"lasts","manchmal":"sometimes","tage":"days","ziemlich":"quite","ungewöhnlich":"unusual","uns":"us","deinem":"your","anstrengend":"exhausting","brautpaar":"bride and groom","kaum":"hardly","tag":"day","genießen":"enjoy","kompromiss":"compromise","kompromisse":"compromises","engsten":"closest","so":"so / that way","niemand":"nobody","fühlt":"feels","ausgeschlossen":"excluded / left out","liebe":"love","wichtigste":"most important (thing)","sondern":"but rather",
+"solarium":"tanning bed / tanning salon","solariums":"of the tanning bed","winter":"winter","gesundheit":"health","brauchen":"need","sonnenlicht":"sunlight","wohlbefinden":"well-being","produktion":"production","vitamin":"vitamin","warnen":"warn","künstliche":"artificial","licht":"light","haut":"skin","schädigen":"damage","hautkrebs":"skin cancer","auslösen":"trigger / cause","beste":"best","risiken":"risks","größer":"bigger / greater","ins":"into the","gehen":"go","stimmung":"mood","verbessern":"improve","gegen":"against","lustlosigkeit":"listlessness","strahlen":"rays","stark":"strong","hautzellen":"skin cells","schneller":"faster","altern":"age","lassen":"let / make","risiko":"risk","erhöhen":"increase","schönheitsideal":"beauty ideal","besucher":"visitors","braun":"brown / tanned","braune":"tanned","schön":"beautiful","gesund":"healthy","aussehen":"appearance / look","fall":"case (auf keinen Fall = under no circumstances)","empfindlich":"sensitive","minderjährige":"minors","richtig":"right","möglichst":"as … as possible","draußen":"outside","spaziergang":"walk","mittagszeit":"lunchtime","ernährung":"diet / nutrition","rücksprache":"consultation","arzt":"doctor","tablette":"tablet","aufnehmen":"take in / absorb","lang":"long","dunkel":"dark","scheint":"shines / seems","sonne":"sun","öfter":"more often","musste":"had to","mich":"myself / me","daran":"to it","gewöhnen":"get used to","treffen":"meetings / meet","dabei":"with that","tipps":"tips","wer":"whoever / who","vorher":"beforehand","beraten":"advise","gerät":"device","niedriger":"low / lower","strahlenbelastung":"radiation exposure","wählen":"choose","ernste":"serious","frische":"fresh","luft":"air","bewegung":"exercise / movement","gesunde":"healthy","wahl":"choice",
+"nahrungsergänzungsmittel":"dietary supplements","angebot":"range / offer","vitaminen":"vitamins","mineralstoffen":"minerals","form":"form","tabletten":"tablets / pills","kapseln":"capsules","pulver":"powder","experten":"experts","meinen":"think / mean","ausgewogene":"balanced","völlig":"completely","ausreicht":"is sufficient","gesunden":"healthy","frischem":"fresh","obst":"fruit","gemüse":"vegetables","nährstoffe":"nutrients","bekommt":"gets","bestimmten":"certain","situationen":"situations","veganer":"vegans","schwangere":"pregnant women","häufig":"frequently","folsäure":"folic acid","produkte":"products","teuer":"expensive","vitamine":"vitamins","schädlich":"harmful","hoher":"high","dosis":"dose","nimmt":"takes","zeitmangel":"lack of time","kochen":"cook","greifen":"reach for (greifen zu)","lieber":"rather / preferably","pille":"pill","ungesunde":"unhealthy","lebensweise":"lifestyle","ausgleichen":"make up for / compensate","hersteller":"manufacturers","angst":"fear","verdienen":"earn","verspricht":"promises","halten":"keep / hold (Versprechen halten)","einnahme":"intake","spricht":"speaks","bluttest":"blood test","zeigen":"show","einem":"one / you","wirklich":"really","fehlt":"is missing","einmal":"once","nachdem":"after","mangel":"deficiency","festgestellt":"found / established","hatte":"had","auszugeben":"to spend","gesunde":"healthy","wochenende":"weekend","woche":"week","vorkochen":"cook in advance","fällen":"cases","ersetzt":"replaced",
+"elektroautos":"electric cars","elektroauto":"electric car","elektroautos":"electric cars","verkehrsmittel":"means of transport","zukunft":"future","autor":"author","nennt":"names","niedrigen":"low","pro":"per","kilometer":"kilometre","umweltfreundlichkeit":"environmental friendliness","hohen":"high","kaufpreis":"purchase price","geringe":"low / small","reichweite":"range","wenigen":"few","ladestationen":"charging stations","gehört":"belongs","noch":"still","einige":"some","probleme":"problems","heute":"today","allem":"all (vor allem = above all)","stadt":"city","geeignet":"suitable","umweltfreundlich":"environmentally friendly","schädlichen":"harmful","abgase":"exhaust fumes","produzieren":"produce","leise":"quiet","strom":"electricity","steuer":"tax","versicherung":"insurance","niedriger":"lower","hoch":"high","zudem":"moreover","aufladen":"charging","stunden":"hours","akkus":"batteries","jahre":"years","sicherheit":"safety","verkehr":"traffic","fast":"almost","geräusche":"noises","machen":"make","fußgänger":"pedestrians","radfahrer":"cyclists","überhören":"not hear / miss hearing","unfällen":"accidents","führen":"lead","staates":"of the state","staat":"state","er":"he / it","stärker":"more strongly","fördern":"support / promote","bauen":"build","kauf":"purchase","finanziell":"financially","unterstützen":"support","land":"countryside / country","unterscheiden":"distinguish","fährt":"drives","meistens":"mostly","kurze":"short","strecken":"distances","reicht":"is enough","langen":"long","reisen":"journeys","unpraktisch":"impractical","straßen":"streets / roads","sieht":"sees","bekannter":"acquaintance","seit":"since / for","zwei":"two","zufrieden":"satisfied","hause":"home (zu Hause = at home)","laden":"charge","setzen":"rely on (setzen auf)","bus":"bus","bahn":"train / railway","auszubauen":"to expand","fahrrad":"bicycle","fahren":"drive / ride","umwelt":"environment","schonen":"protect / spare","perfekt":"perfect","preise":"prices","sinken":"fall / sink","sich":"oneself","jedem":"every","einige":"some",
+"ja":"yes","nein":"no","sehr":"very","hier":"here","jetzt":"now","dann":"then","als":"than / as","wer":"who","dich":"you","dir":"you / to you","mein":"my","dein":"your","stimme":"agree (zustimmen)","anderer":"different / other","könntest":"could you","genauer":"more precisely","erklären":"explain","geht's":"it goes"
+};
+
+/* ===================== HELPERS ===================== */
+const $ = s => document.querySelector(s);
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const WORD_RE = /[A-Za-zÄÖÜäöüß]+(?:-[A-Za-zÄÖÜäöüß]+)*/g;
+const isQ = s => s.trim().endsWith("?");
+
+function lookup(word){
+  const w = word.toLowerCase();
+  if (DICT[w]) return DICT[w];
+  for (const suf of ["en","em","er","es","e","n","s"]) {
+    if (w.endsWith(suf) && DICT[w.slice(0,-suf.length)]) return DICT[w.slice(0,-suf.length)];
+  }
+  for (const add of ["e","en","n"]) { if (DICT[w+add]) return DICT[w+add]; }
+  return null;
+}
+
+// Wrap words in spans; keep char offsets for speech highlighting
+function wrap(text, ctx){
+  let out = "", last = 0, m; WORD_RE.lastIndex = 0;
+  while ((m = WORD_RE.exec(text))) {
+    out += esc(text.slice(last, m.index));
+    out += `<span class="w" data-s="${m.index}" data-e="${m.index+m[0].length}" data-ctx="${ctx}">${esc(m[0])}</span>`;
+    last = m.index + m[0].length;
+  }
+  return out + esc(text.slice(last));
+}
+
+/* ===================== STATE ===================== */
+let cur = 0, showEn = false;
+let done = {};
+try { done = JSON.parse(localStorage.getItem("b2done")||"{}"); } catch(e){}
+function saveDone(){ try{ localStorage.setItem("b2done", JSON.stringify(done)); }catch(e){} }
+const key = (t,i) => TOPICS[t].id + ":" + i;
+function progress(t){ return TOPICS[t].sections.filter((_,i)=>done[key(t,i)]).length; }
+
+/* ===================== RENDER ===================== */
+function renderSide(){
+  $("#topics").innerHTML = TOPICS.map((t,i)=>{
+    const p = progress(i);
+    return `<button class="topic-btn ${i===cur?'active':''}" onclick="go(${i})">
+      <span class="t">${esc(t.title)}</span><span class="p">${p}/10 gelernt</span>
+      <div class="bar"><i style="width:${p*10}%"></i></div></button>`;
+  }).join("");
+}
+function renderMain(){
+  const t = TOPICS[cur];
+  let h = `<div class="eyebrow">Thema ${cur+1} von ${TOPICS.length} · Teil 2: Diskussion</div>
+  <h1>${wrap(t.title, cur+"|t")}</h1><p class="h1-en">${esc(t.en)}</p>
+  <div class="actions">
+    <button class="btn primary" onclick="P.open(${cur},'lesson')">▶ Video-Lektion</button>
+    <button class="btn" onclick="P.open(${cur},'shadow')">🗣️ Nachsprechen</button>
+    <button class="btn" onclick="P.open(${cur},'exam')">🎤 Prüfungssimulation</button>
+    <button class="btn ${showEn?'on':''}" onclick="toggleEn()">${showEn?'Englisch ausblenden':'Englisch anzeigen'}</button>
+  </div>
+  <div id="voiceBanner"></div>
+  <div class="tip">Klicke auf ein Wort → englische Bedeutung. 🔊 neben jedem Satz liest ihn vor. Hake jeden Punkt ab, wenn sie ihn frei sprechen kann.</div>
+  <div class="${showEn?'show-en':''}">`;
+  t.sections.forEach(([head, headEn, sents], si)=>{
+    const d = done[key(cur,si)];
+    h += `<div class="section ${d?'done':''}">
+      <div class="sec-head"><div class="num">${si+1}</div>
+        <div class="sec-title">${wrap(head, cur+"|"+si+"|h")}<small>${esc(headEn)}</small></div>
+        <button class="icon-btn" onclick="P.open(${cur},'lesson',${si})">▶ Video</button>
+        <button class="icon-btn done-btn ${d?'is':''}" onclick="toggleDone(${si})">${d?'✓ Gelernt':'Gelernt?'}</button>
+      </div>`;
+    sents.forEach(([de,en], k)=>{
+      h += `<p class="sent ${isQ(de)?'q':''}">${wrap(de, cur+"|"+si+"|"+k)} <button class="say" title="Vorlesen" onclick="sayOne(${si},${k})">🔊</button></p><p class="en">${esc(en)}</p>`;
+    });
+    h += `</div>`;
+  });
+  h += `</div><div class="redemittel"><h3>Redemittel für die Prüfung</h3><div class="rm-grid">` +
+    REDEMITTEL.map(([d,e],i)=>`<div class="rm"><b>${wrap(d,"rm|"+i)}</b><span>${esc(e)}</span></div>`).join("") + `</div></div>`;
+  $("#main").innerHTML = h;
+  renderBanner();
+}
+function go(i){ cur=i; renderSide(); renderMain(); window.scrollTo(0,0); }
+function toggleEn(){ showEn=!showEn; renderMain(); }
+function toggleDone(si){ const k=key(cur,si); done[k]=!done[k]; saveDone(); renderSide(); renderMain(); }
+
+/* ===================== WORD POPUP ===================== */
+function ctxSentence(ctx){
+  const p = ctx.split("|");
+  if (p[0]==="rm") return REDEMITTEL[+p[1]][1];
+  const t = TOPICS[+p[0]];
+  if (p[1]==="t") return t.en;
+  const sec = t.sections[+p[1]];
+  if (p[2]==="h") return sec[1];
+  return sec[2][+p[2]][1];
+}
+document.addEventListener("click", e=>{
+  const w = e.target.closest(".w");
+  if (!w) { if (!e.target.closest("#pop")) hidePop(); return; }
+  e.stopPropagation();
+  const word = w.textContent, g = lookup(word), pop = $("#pop");
+  pop.querySelector(".pw").textContent = word;
+  const pg = pop.querySelector(".pg");
+  pg.textContent = g || "Nicht im Wörterbuch – siehe Satz unten oder Google Translate";
+  pg.className = "pg" + (g ? "" : " none");
+  const ctx = w.dataset.ctx;
+  pop.querySelector(".ps").innerHTML = ctx ? "<b>Satz:</b> " + esc(ctxSentence(ctx)) : "";
+  const q = encodeURIComponent(word);
+  pop.querySelector(".prow").innerHTML =
+    `<a href="#" onclick="speak(${JSON.stringify(word).replace(/"/g,'&quot;')});return false;">🔊 Aussprache</a>
+     <a href="https://translate.google.com/?sl=de&tl=en&text=${q}" target="_blank" rel="noopener">Google Translate ↗</a>
+     <a href="https://www.dict.cc/?s=${q}" target="_blank" rel="noopener">dict.cc ↗</a>`;
+  pop.style.display = "block";
+  const r = w.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
+  let x = Math.min(Math.max(8, r.left), innerWidth - pw - 8);
+  let y = r.bottom + 8; if (y + ph > innerHeight - 8) y = r.top - ph - 8;
+  pop.style.left = x + "px"; pop.style.top = Math.max(8,y) + "px";
+  if (P.playing) P.pause();
+});
+function hidePop(){ $("#pop").style.display = "none"; }
+
+/* ===================== SPEECH ===================== */
+let voices = [], voice = null, rate = 1.0;
+function loadVoices(){
+  if (window.TIMINGS) {
+    const sel = $("#voiceSel");
+    sel.innerHTML = Object.keys(window.TIMINGS).map(v=>`<option value="${v}" ${v===recVoice?'selected':''}>${v[0].toUpperCase()+v.slice(1)} (natürlich)</option>`).join("");
+    $("#vnote").innerHTML = "✓ Aufgenommene natürliche KI-Stimme – funktioniert auf jedem Gerät.";
+    renderBanner(); return;
+  }
+  const all = speechSynthesis.getVoices();
+  voices = all.filter(v => /^de/i.test(v.lang));
+  voices.sort((a,b)=>score(b)-score(a));
+  if (!voice || !voices.includes(voice) || (!isNatural(voice) && isNatural(voices[0]))) voice = voices[0] || null;
+  const sel = $("#voiceSel");
+  sel.innerHTML = voices.length ? voices.map((v,i)=>`<option value="${i}" ${v===voice?'selected':''}>${esc(v.name.replace(/Microsoft |Online |- German.*$/g,'').trim())}</option>`).join("")
+                                : `<option>Keine deutsche Stimme</option>`;
+  renderBanner();
+  $("#vnote").innerHTML = voices.length && /natural|neural|online/i.test(voice.name)
+    ? "✓ Natürliche KI-Stimme aktiv: " + esc(voice.name)
+    : "Hinweis: Für eine natürliche KI-Stimme öffne diese Seite in <b>Microsoft Edge</b> (Stimmen „Katja Natural“, „Conrad Natural“, „Amala Natural“).";
+}
+function isNatural(v){ return v && /natural|neural/i.test(v.name); }
+function renderBanner(){
+  const el=document.getElementById("voiceBanner"); if(!el) return;
+  if (window.TIMINGS && recVoice) { el.innerHTML=`<div class="vb good">✅ <span><b>Natural AI voice (recorded):</b> ${recVoice[0].toUpperCase()+recVoice.slice(1)} – works on phone, Chrome, Safari and Edge.</span><button class="icon-btn" onclick="testVoice()">🔊 Test voice</button></div>`; return; }
+  const nat=voices.filter(isNatural);
+  if (isNatural(voice)) {
+    el.innerHTML=`<div class="vb good">✅ <span><b>Natural voice is on:</b> ${esc(voice.name.replace(/Microsoft |Online |\(Natural\)|- German.*$/g,'').trim())}${nat.length>1?` (+${nat.length-1} more in the voice list in the player)`:''}</span><button class="icon-btn" onclick="testVoice()">🔊 Test voice</button></div>`;
+  } else {
+    el.innerHTML=`<div class="vb bad">⚠️ <span><b>Robotic voice:</b> this browser has no natural German voice.<br>Open the downloaded file <b>b2-muendlich.html</b> in <b>Microsoft Edge</b> (right-click → Open with → Microsoft Edge) while you're online. Edge then uses the natural AI voices Katja, Amala, Conrad, Killian and Florian automatically.</span><button class="icon-btn" onclick="testVoice()">🔊 Test voice</button></div>`;
+  }
+}
+function testVoice(){ say("test", "Hallo! Ich bin deine Stimme für die B2-Prüfung. Viel Erfolg beim Lernen!"); }
+function score(v){ let s=0; if(/natural|neural/i.test(v.name)) s+=10; if(/online/i.test(v.name)) s+=5; if(/de-DE/i.test(v.lang)) s+=3; if(/katja|amala|seraphina|conrad|killian|florian/i.test(v.name)) s+=2; if(/google/i.test(v.name)) s+=1; return s; }
+if ("speechSynthesis" in window) { speechSynthesis.onvoiceschanged = loadVoices; }
+setTimeout(loadVoices, 0);
+
+function speak(text, {onWord, onEnd, r} = {}){
+  if (!("speechSynthesis" in window)) { onEnd && setTimeout(onEnd, 1500); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "de-DE"; if (voice) u.voice = voice; u.rate = r || rate;
+  if (onWord) u.onboundary = e => { if (e.name === "word" || e.name === undefined) onWord(e.charIndex); };
+  u.onend = () => onEnd && onEnd();
+  u.onerror = () => onEnd && onEnd();
+  speechSynthesis.speak(u);
+}
+function sayOne(si,k){
+  const de = TOPICS[cur].sections[si][2][k][0];
+  const p = document.querySelectorAll(".section")[si].querySelectorAll(".sent")[k];
+  const spans = [...p.querySelectorAll(".w")];
+  say(TOPICS[cur].id+"/"+si+"_"+k, de, { onWord: i => spans.forEach(s => s.classList.toggle("speaking", +s.dataset.s <= i && i < +s.dataset.e)),
+              onEnd: () => spans.forEach(s => s.classList.remove("speaking")) });
+}
+
+/* ===================== RECORDED NATURAL AUDIO ===================== */
+const REC = window.TIMINGS || null;              // created by tools/make_audio.py
+const REC_VOICES = REC ? Object.keys(REC) : [];
+let recVoice = REC_VOICES[0] || null, curAudio = null, rafId = 0;
+const hasRec = k => !!(recVoice && REC[recVoice] && REC[recVoice][k]);
+function stopAll(){
+  if (curAudio){ curAudio.onended = null; curAudio.pause(); curAudio = null; }
+  cancelAnimationFrame(rafId);
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+}
+// say(): plays the recorded MP3 if it exists, otherwise falls back to the browser voice
+function say(k, text, {onWord, onEnd} = {}){
+  stopAll();
+  if (!hasRec(k)) { speak(text, {onWord, onEnd}); return; }
+  const tm = REC[recVoice][k];
+  const a = new Audio("audio/" + recVoice + "/" + k + ".mp3");
+  a.playbackRate = rate; a.preservesPitch = true; curAudio = a;
+  let done = false;
+  const fin = () => { if (done) return; done = true; cancelAnimationFrame(rafId); if (curAudio === a) curAudio = null; onEnd && onEnd(); };
+  a.onended = fin;
+  a.onerror = () => { if (curAudio === a) curAudio = null; speak(text, {onWord, onEnd}); };
+  const tick = () => {
+    if (onWord && tm.length) {
+      const ms = a.currentTime * 1000; let idx = -1;
+      for (const [c, t] of tm) { if (t <= ms + 60) idx = c; else break; }
+      if (idx >= 0) onWord(idx);
+    }
+    if (!a.paused) rafId = requestAnimationFrame(tick);
+  };
+  a.onplay = () => { rafId = requestAnimationFrame(tick); };
+  a.play().catch(() => { a.onerror(); });
+}
+
+/* ===================== VIDEO PLAYER ===================== */
+const MODES = { lesson:"Lektion", shadow:"Nachsprechen", exam:"Prüfung" };
+const P = {
+  t:0, mode:"lesson", items:[], i:0, playing:false, timer:null, en:true, token:0,
+  build(){
+    this.items = [];
+    TOPICS[this.t].sections.forEach(([h,hen,s],si)=>{
+      if (this.mode === "exam") this.items.push({si, kind:"prompt", h, de:h, en:hen});
+      s.forEach(([de,en],k)=> this.items.push({si, k, h, de, en}));
+    });
+  },
+  open(t, mode, startSec){
+    this.t=t; this.mode=mode; this.build();
+    this.i = startSec!=null ? this.items.findIndex(x=>x.si===startSec) : 0;
+    $("#player").classList.add("open"); hidePop();
+    $("#modeBtn").textContent = "Modus: " + MODES[mode];
+    this.show(); this.play();
+  },
+  close(){ this.stop(); $("#player").classList.remove("open"); },
+  show(){
+    const it = this.items[this.i], T = TOPICS[this.t];
+    $("#stTopic").textContent = T.title;
+    $("#stCount").textContent = `Punkt ${it.si+1} / 10`;
+    const head = $("#stHead"); head.textContent = `${it.si+1}. ${it.h}`;
+    const tx = $("#stText"), en = $("#stEn");
+    if (it.kind === "prompt") {
+      tx.innerHTML = `<span style="opacity:.85">Du bist dran! Sprich frei über:</span><br>„${wrap(it.h, this.t+"|"+it.si+"|h")}“`;
+      en.textContent = it.en;
+    } else {
+      tx.innerHTML = wrap(it.de, this.t+"|"+it.si+"|"+it.k);
+      en.textContent = it.en;
+    }
+    en.classList.toggle("hide", !this.en);
+    [head,tx].forEach(el=>{ el.style.animation="none"; el.offsetHeight; el.style.animation=""; });
+    $("#progBar").style.width = ((this.i+1)/this.items.length*100) + "%";
+    $("#stTimer").classList.remove("show");
+    $("#avLabel").textContent = it.kind==="prompt" ? "Prüferin" : (isQ(it.de) ? "Frage an den Partner" : "Sprecherin");
+  },
+  play(){ this.playing=true; $("#playBtn").textContent="⏸ Pause"; this.run(); },
+  pause(){ this.playing=false; this.token++; $("#playBtn").textContent="▶ Abspielen"; stopAll(); clearInterval(this.timer); $("#stage").classList.remove("talking"); $("#stTimer").classList.remove("show"); },
+  stop(){ this.pause(); },
+  toggle(){ this.playing ? this.pause() : this.play(); },
+  run(){
+    const tok = ++this.token, it = this.items[this.i], stage = $("#stage");
+    const spans = [...$("#stText").querySelectorAll(".w")];
+    const after = () => { if (tok!==this.token) return; stage.classList.remove("talking"); this.afterItem(tok); };
+    if (it.kind === "prompt") {
+      stage.classList.add("talking");
+      say(TOPICS[this.t].id+"/"+it.si+"_p", `Punkt ${it.si+1}: ${it.h}. Bitte sprich jetzt.`, { onEnd: ()=>{ if(tok!==this.token) return; stage.classList.remove("talking"); this.countdown(tok, 45, "Sprich jetzt", ()=>this.advance(tok)); } });
+      return;
+    }
+    stage.classList.add("talking");
+    say(TOPICS[this.t].id+"/"+it.si+"_"+it.k, it.de, {
+      onWord: i => spans.forEach(s => s.classList.toggle("speaking", +s.dataset.s <= i && i < +s.dataset.e)),
+      onEnd: () => { spans.forEach(s=>s.classList.remove("speaking")); after(); }
+    });
+  },
+  afterItem(tok){
+    if (this.mode === "shadow") {
+      const words = this.items[this.i].de.split(/\s+/).length;
+      this.countdown(tok, Math.ceil(words*0.55/rate)+2, "Jetzt du – nachsprechen", ()=>this.advance(tok));
+    } else setTimeout(()=>this.advance(tok), 600);
+  },
+  countdown(tok, n, label, cb){
+    const box = $("#stTimer"); $("#stTimerLabel").textContent = label; $("#stTimerNum").textContent = n; box.classList.add("show");
+    clearInterval(this.timer);
+    this.timer = setInterval(()=>{
+      if (tok!==this.token) { clearInterval(this.timer); return; }
+      n--; $("#stTimerNum").textContent = n;
+      if (n<=0) { clearInterval(this.timer); box.classList.remove("show"); cb(); }
+    },1000);
+  },
+  advance(tok){
+    if (tok!==this.token) return;
+    if (this.i < this.items.length-1) { this.i++; this.show(); this.run(); }
+    else { this.pause(); $("#stHead").textContent="Super gemacht! 🎉"; $("#stText").textContent="Thema abgeschlossen."; $("#stEn").textContent="Topic complete – well done!"; }
+  },
+  next(){ const was=this.playing; this.pause(); if(this.i<this.items.length-1) this.i++; this.show(); if(was) this.play(); },
+  prev(){ const was=this.playing; this.pause(); if(this.i>0) this.i--; this.show(); if(was) this.play(); },
+  cycleMode(){ const ks=Object.keys(MODES); const si=this.items[this.i].si; this.mode=ks[(ks.indexOf(this.mode)+1)%ks.length]; $("#modeBtn").textContent="Modus: "+MODES[this.mode]; const was=this.playing; this.pause(); this.build(); this.i=this.items.findIndex(x=>x.si===si); this.show(); if(was) this.play(); },
+  cycleRate(){ const rs=[0.85,1.0,1.1]; rate=rs[(rs.indexOf(rate)+1)%rs.length]; $("#rateBtn").textContent=`Tempo ${rate}×`; if(curAudio) curAudio.playbackRate=rate; },
+  toggleEn(){ this.en=!this.en; $("#enBtn").classList.toggle("on",this.en); $("#stEn").classList.toggle("hide",!this.en); },
+  setVoice(i){ if (window.TIMINGS) { recVoice = i; renderBanner(); return; } voice = voices[+i]; loadVoices(); }
+};
+document.addEventListener("keydown", e=>{
+  if (!$("#player").classList.contains("open")) return;
+  if (e.key===" ") { e.preventDefault(); P.toggle(); }
+  if (e.key==="ArrowRight") P.next();
+  if (e.key==="ArrowLeft") P.prev();
+  if (e.key==="Escape") P.close();
+});
+
+go(0);
+</script>
+</body>
+</html>
